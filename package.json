@@ -2,7 +2,10 @@
   "name": "transpose-lib",
   "version": "1.0.0",
   "description": "Music transposition library",
-  "main": "build/index.js",
+  "main": "dist/index.js",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "clean": "rm -rf dist/*",
     "build": "npm run clean && babel src -d dist -s --ignore **/*.test.js",

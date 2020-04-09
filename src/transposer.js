@@ -102,13 +102,18 @@ export class Transposer {
         let endIndex = 0
 
         // Chop line up into same number of parts as the chords array in the last line
-        lastLine.parts.forEach((part) => {
-          if (part[0] !== null) {
-            endIndex += progression[part[0]].length
+        lastLine.parts.forEach((part, partIndex) => {
+          if (partIndex === lastLine.parts.length - 1) {
+            parts.push(line.slice(beginIndex))
+          } else {
+            if (part[0] !== null) {
+              endIndex += progression[part[0]].length
+            }
+
+            endIndex += part[1].length
+            parts.push(line.slice(beginIndex, endIndex))
+            beginIndex = endIndex
           }
-          endIndex += part[1].length
-          parts.push(line.slice(beginIndex, endIndex))
-          beginIndex = endIndex
         })
 
         lines.push({ type: "lyrics", parts })
@@ -124,7 +129,7 @@ export class Transposer {
   }
 
   stringify(newProgression) {
-    const progression = newProgression ?? this.progression
+    newProgression = newProgression ?? this.progression
 
     let newLines = this.lines.map((line) =>
       line.type === "other"
@@ -132,10 +137,29 @@ export class Transposer {
         : line.type === "chords"
         ? {
             type: "chords",
-            parts: line.parts.map(
-              // TODO: Take spaces from part[1] if there would be at least one left
-              (part) => (part[0] !== null ? progression[part[0]] : "") + part[1]
-            ),
+            parts: line.parts.map((part) => {
+              if (part[0] === null) {
+                return part[1]
+              }
+
+              const newChord = newProgression[part[0]]
+              const oldChord = this.progression[part[0]]
+              const delta = newChord.length - oldChord.length
+              let s = part[1]
+
+              if (delta > 0) {
+                // Leave at least one space between chords
+                if (s.length > 1) {
+                  s = s.substring(delta)
+                } else {
+                  s = s.padStart(delta + s.length - 1)
+                }
+              } else if (delta < 0) {
+                s = s.padStart(s.length - delta)
+              }
+
+              return newChord + s
+            }),
           }
         : line
     )

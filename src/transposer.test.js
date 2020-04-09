@@ -1,22 +1,22 @@
-import { Transposer } from "./transposer"
+import { Transposer } from "./Transposer"
 
 const song = `Song Title - Artist
 | G | % | D | % |
 G A D A D
 
-D      A            G      A   D A G
-Simple lyrics for a simple song
+D      A            G      A    D A G
+Simple lyrics for a simple song-a-long
     D           A               G      A    {riff}
 mmm This is the chorus, can you sing along?`
 
 const transposedSong = `Song Title - Artist
-| Ab | % | Eb | % |
+| Ab| % | Eb| % |
 Ab Bb Eb Bb Eb
 
-Eb      Bb            Ab      Bb   Eb Bb Ab
-Simple  lyrics for a  simple  song
-    Eb           Bb               Ab      Bb    {riff}
-mmm This is the  chorus, can you  sing al ong?`
+Eb     Bb           Ab     Bb   Eb Bb Ab
+Simple lyrics for a simple song-a- lo ng
+    Eb          Bb              Ab     Bb   {riff}
+mmm This is the chorus, can you sing along?`
 
 const songLines = [
   { type: "other", parts: ["Song Title - Artist"] },
@@ -45,7 +45,7 @@ const songLines = [
       [7, "      "],
       [8, "            "],
       [9, "      "],
-      [10, "   "],
+      [10, "    "],
       [11, " "],
       [12, " "],
       [13, ""],
@@ -53,7 +53,7 @@ const songLines = [
   },
   {
     type: "lyrics",
-    parts: ["Simple ", "lyrics for a ", "simple ", "song", "  ", "  ", " "],
+    parts: ["Simple ", "lyrics for a ", "simple ", "song-", "a-", "lo", "ng"],
   },
   {
     type: "chords",
