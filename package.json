@@ -4,7 +4,9 @@
   "description": "Music transposition library",
   "main": "dist/index.js",
   "files": [
-    "dist/**"
+    "dist/**",
+    "README.md",
+    "LICENSE.md"
   ],
   "scripts": {
     "clean": "rm -rf dist/*",
@@ -24,8 +26,24 @@
       "scratch/"
     ]
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kingstonsoftware/transposer-lib.git"
+  },
+  "keywords": [
+    "package",
+    "project",
+    "build",
+    "release",
+    "test",
+    "start"
+  ],
+  "bugs": {
+    "url": "https://github.com/kingstonsoftware/transposer-lib/issues"
+  },
+  "homepage": "https://github.com/kingstonsoftware/transposer-lib#readme",
+  "author": "Kingston Software Solutions",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.0",
