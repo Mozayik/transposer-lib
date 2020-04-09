@@ -4,7 +4,22 @@
   "description": "Music transposition library",
   "main": "build/index.js",
   "scripts": {
-    "test": "jest"
+    "clean": "rm -rf dist/*",
+    "build": "npm run clean && babel src -d dist -s --ignore **/*.test.js",
+    "test": "jest",
+    "test:debug": "babel-node --inspect-brk ./node_modules/jest-cli/bin/jest.js --runInBand",
+    "deploy": "npm publish --access public",
+    "show-coverage": "open coverage/lcov-report/index.html",
+    "lines-of-code": "wc -l $(git ls-files | grep '.*\\.js$')"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "automock": false,
+    "testPathIgnorePatterns": [
+      "dist/",
+      "node_modules/",
+      "scratch/"
+    ]
   },
   "author": "",
   "license": "ISC",
