@@ -120,8 +120,7 @@ export class Transposer {
 
     this.lines = lines
     this.progression = progression
-
-    this._guessKey()
+    this.originalKey = this._guessKey()
   }
 
   stringify(newProgression) {

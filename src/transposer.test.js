@@ -105,6 +105,7 @@ test("parse", () => {
 
   expect(transposer.lines).toEqual(songLines)
   expect(transposer.progression).toEqual(songProgression)
+  expect(transposer.originalKey).toBe("D")
 })
 
 test("stringify", () => {
@@ -137,14 +138,6 @@ test("stringify", () => {
   ]
 
   expect(transposer.stringify(newProgression)).toMatch(transposedSong)
-})
-
-test("simpleSong", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = ["D", "A", "G", "A", "D", "A", "G", "A"]
-
-  expect(transposer._guessKey()).toEqual("D")
 })
 
 test("norewegianSong", async () => {
