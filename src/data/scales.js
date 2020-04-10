@@ -1,6 +1,6 @@
 // scale_form = [1-7, #1-7, b1-7, *1-7, bb1-7]
 export const scales = {
-  CScale: [
+  C: [
     "C",
     "D",
     "E",
@@ -37,7 +37,7 @@ export const scales = {
     "Abb",
     "Bbb",
   ],
-  GScale: [
+  G: [
     "G",
     "A",
     "B",
@@ -74,7 +74,7 @@ export const scales = {
     "Ebb",
     "Fb",
   ],
-  DScale: [
+  D: [
     "D",
     "E",
     "F#",
@@ -111,7 +111,7 @@ export const scales = {
     "Bbb",
     "Cb",
   ],
-  AScale: [
+  A: [
     "A",
     "B",
     "C#",
@@ -148,7 +148,7 @@ export const scales = {
     "Fb",
     "Gb",
   ],
-  EScale: [
+  E: [
     "E",
     "F#",
     "G#",
@@ -185,7 +185,7 @@ export const scales = {
     "Cb",
     "Db",
   ],
-  BScale: [
+  B: [
     "B",
     "C#",
     "D#",
@@ -222,7 +222,7 @@ export const scales = {
     "Gb",
     "Ab",
   ],
-  "F#Scale": [
+  "F#": [
     "F#",
     "G#",
     "A#",
@@ -259,7 +259,7 @@ export const scales = {
     "Db",
     "Eb",
   ],
-  "C#Scale": [
+  "C#": [
     "C#",
     "D#",
     "E#",
@@ -296,12 +296,12 @@ export const scales = {
     "Ab",
     "Bb",
   ],
-  // "G#Scale": ["G#", "A#", "B#", "C#", "D#", "E#", "F*", "G*", "A*", "B*", "C*", "D*", "E*", "F#*", "G", "A", "B", "C", "D", "E", "F#", "G#*", "A#*", "B#*", "C#*", "D#*", "E#*", "F**", "Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
-  // "D#Scale": ["D#", "E#", "F*", "G#", "A#", "B#", "C*", "D*", "E*", "F#*", "G*", "A*", "B*", "C#*", "D", "E", "F#", "G", "A", "B", "C#", "D#*", "E#*", "F**", "G#*", "A#*", "B#*", "C**", "Db", "Eb", "F", "Gb", "Ab", "Bb", "C"],
-  // "A#Scale": ["A#", "B#", "C*", "D#", "E#", "F*", "G*", "A*", "B*", "C#*", "D*", "E*", "F#*", "G#*", "A", "B", "C#", "D", "E", "F#", "G#", "A#*", "B#*", "C**", "D#*", "E#*", "F**", "G**", "Ab", "Bb", "C", "D#", "Eb", "F", "G"],
-  // E#Scale:
-  // B#Scale:
-  FScale: [
+  // "G#": ["G#", "A#", "B#", "C#", "D#", "E#", "F*", "G*", "A*", "B*", "C*", "D*", "E*", "F#*", "G", "A", "B", "C", "D", "E", "F#", "G#*", "A#*", "B#*", "C#*", "D#*", "E#*", "F**", "Gb", "Ab", "Bb", "Cb", "Db", "Eb", "F"],
+  // "D#": ["D#", "E#", "F*", "G#", "A#", "B#", "C*", "D*", "E*", "F#*", "G*", "A*", "B*", "C#*", "D", "E", "F#", "G", "A", "B", "C#", "D#*", "E#*", "F**", "G#*", "A#*", "B#*", "C**", "Db", "Eb", "F", "Gb", "Ab", "Bb", "C"],
+  // "A#": ["A#", "B#", "C*", "D#", "E#", "F*", "G*", "A*", "B*", "C#*", "D*", "E*", "F#*", "G#*", "A", "B", "C#", "D", "E", "F#", "G#", "A#*", "B#*", "C**", "D#*", "E#*", "F**", "G**", "Ab", "Bb", "C", "D#", "Eb", "F", "G"],
+  // E#:
+  // B#:
+  F: [
     "F",
     "G",
     "A",
@@ -338,7 +338,7 @@ export const scales = {
     "Dbb",
     "Ebb",
   ],
-  BbScale: [
+  Bb: [
     "Bb",
     "C",
     "D",
@@ -375,7 +375,7 @@ export const scales = {
     "Gbb",
     "Abb",
   ],
-  EbScale: [
+  Eb: [
     "Eb",
     "F",
     "G",
@@ -412,7 +412,7 @@ export const scales = {
     "Cbb",
     "Dbb",
   ],
-  AbScale: [
+  Ab: [
     "Ab",
     "Bb",
     "C",
@@ -449,7 +449,7 @@ export const scales = {
     "Fbb",
     "Gbb",
   ],
-  DbScale: [
+  Db: [
     "Db",
     "Eb",
     "F",
@@ -486,7 +486,7 @@ export const scales = {
     "Bbbb",
     "Cbb",
   ],
-  GbScale: [
+  Gb: [
     "Gb",
     "Ab",
     "Bb",
@@ -523,7 +523,7 @@ export const scales = {
     "Ebbb",
     "Fbb",
   ],
-  CbScale: [
+  Cb: [
     "Cb",
     "Db",
     "Eb",
@@ -560,8 +560,8 @@ export const scales = {
     "Abbb",
     "Bbbb",
   ],
-  testScale: [],
-  // FbScale:
-  // BbbFlatScale:
+  test: [],
+  // Fb:
+  // BbbFlat:
   //  ...
 }

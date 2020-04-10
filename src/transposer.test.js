@@ -77,26 +77,55 @@ const songLines = [
   },
 ]
 
-const songProgression = [
-  "G",
-  "D",
-  "G",
-  "A",
-  "D",
-  "A",
-  "D",
-  "D",
-  "A",
-  "G",
-  "A",
-  "D",
-  "A",
-  "G",
-  "D",
-  "A",
-  "G",
-  "A",
-]
+// A truncated list of transpositions
+const songTranspositions = {
+  D: {
+    progression: [
+      "G",
+      "D",
+      "G",
+      "A",
+      "D",
+      "A",
+      "D",
+      "D",
+      "A",
+      "G",
+      "A",
+      "D",
+      "A",
+      "G",
+      "D",
+      "A",
+      "G",
+      "A",
+    ],
+    chords: ["A", "D", "G"],
+  },
+  Db: {
+    progression: [
+      "Ab",
+      "Eb",
+      "Ab",
+      "Bb",
+      "Eb",
+      "Bb",
+      "Eb",
+      "Eb",
+      "Bb",
+      "Ab",
+      "Bb",
+      "Eb",
+      "Bb",
+      "Ab",
+      "Eb",
+      "Bb",
+      "Ab",
+      "Bb",
+    ],
+    chords: ["Ab", "Bb", "Eb"],
+  },
+}
 
 test("parse", () => {
   const transposer = new Transposer()
@@ -104,164 +133,130 @@ test("parse", () => {
   transposer.parse(song)
 
   expect(transposer.lines).toEqual(songLines)
-  expect(transposer.progression).toEqual(songProgression)
-  expect(transposer.originalKey).toBe("D")
+  expect(Object.keys(transposer.transpositions).length).toBe(12)
+  expect(transposer.originalKeyName).toBe("D")
 })
 
 test("stringify", () => {
   const transposer = new Transposer()
 
+  transposer.originalKeyName = "D"
   transposer.lines = songLines
-  transposer.progression = songProgression
+  transposer.transpositions = songTranspositions
 
   expect(transposer.stringify()).toMatch(song)
-
-  const newProgression = [
-    "Ab",
-    "Eb",
-    "Ab",
-    "Bb",
-    "Eb",
-    "Bb",
-    "Eb",
-    "Eb",
-    "Bb",
-    "Ab",
-    "Bb",
-    "Eb",
-    "Bb",
-    "Ab",
-    "Eb",
-    "Bb",
-    "Ab",
-    "Bb",
-  ]
-
-  expect(transposer.stringify(newProgression)).toMatch(transposedSong)
+  expect(transposer.stringify("Db")).toMatch(transposedSong)
 })
 
 test("norewegianSong", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = [
-    "C",
-    "G",
-    "Dm",
-    "F",
-    "C",
-    "G",
-    "Dm",
-    "Am",
-    "G",
-    "C",
-    "Am",
-    "G",
-    "Fmaj7",
-  ]
-  expect(transposer._guessKey()).toEqual("C")
+  expect(
+    Transposer.guessKey([
+      "C",
+      "G",
+      "Dm",
+      "F",
+      "C",
+      "G",
+      "Dm",
+      "Am",
+      "G",
+      "C",
+      "Am",
+      "G",
+      "Fmaj7",
+    ])
+  ).toEqual("C")
 })
 
 test("fourChordMinor", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = ["Bbm", "Gb", "Db", "Ab", "Bbm", "Gb", "Db", "Ab"]
-
-  expect(transposer._guessKey()).toEqual("Db")
+  expect(
+    Transposer.guessKey(["Bbm", "Gb", "Db", "Ab", "Bbm", "Gb", "Db", "Ab"])
+  ).toEqual("Db")
 })
 
 test("fourChordMajor", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = ["C", "G", "Am", "F", "C", "G", "Am", "F"]
-
-  expect(transposer._guessKey()).toEqual("C")
+  expect(
+    Transposer.guessKey(["C", "G", "Am", "F", "C", "G", "Am", "F"])
+  ).toEqual("C")
 })
 
 test("guessKeyMedium", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = ["Am", "F", "C", "G", "Am", "F", "C", "G", "Am"]
-
-  expect(transposer._guessKey()).toEqual("C")
+  expect(
+    Transposer.guessKey(["Am", "F", "C", "G", "Am", "F", "C", "G", "Am"])
+  ).toEqual("C")
 })
 
 test("guessKeyHard", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = ["Am", "Dm", "Am", "E7", "Am", "C", "Db/F", "E7"]
-
-  expect(transposer._guessKey()).toEqual("C")
+  expect(
+    Transposer.guessKey(["Am", "Dm", "Am", "E7", "Am", "C", "Db/F", "E7"])
+  ).toEqual("C")
 })
 
 test("leroyBrown", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = [
-    "G",
-    "A",
-    "B",
-    "C",
-    "D",
-    "G",
-    "D",
-    "G",
-    "A",
-    "B",
-    "C",
-    "D",
-    "G",
-    "D",
-    "G",
-    "A",
-    "B",
-    "C",
-    "D",
-    "G",
-    "etc",
-    "G",
-  ]
-
-  expect(transposer._guessKey()).toEqual("G")
+  expect(
+    Transposer.guessKey([
+      "G",
+      "A",
+      "B",
+      "C",
+      "D",
+      "G",
+      "D",
+      "G",
+      "A",
+      "B",
+      "C",
+      "D",
+      "G",
+      "D",
+      "G",
+      "A",
+      "B",
+      "C",
+      "D",
+      "G",
+      "etc",
+      "G",
+    ])
+  ).toEqual("G")
 })
 
 test("alison", async () => {
-  const transposer = new Transposer()
-
-  transposer.progression = [
-    "A",
-    "E",
-    "A",
-    "G#m",
-    "C#m",
-    "A",
-    "G#m",
-    "D",
-    "B7sus4",
-    "B7",
-    "A",
-    "G#m",
-    "C#m",
-    "A",
-    "G#m",
-    "C#m",
-    "A",
-    "G#m",
-    "C#m",
-    "D",
-    "B7sus4",
-    "B7",
-    "A",
-    "E",
-    "A",
-    "B",
-    "G#m",
-    "C#m",
-    "A",
-    "E",
-    "A",
-    "B",
-    "E",
-  ]
-
-  expect(transposer._guessKey()).toEqual("E")
+  expect(
+    Transposer.guessKey([
+      "A",
+      "E",
+      "A",
+      "G#m",
+      "C#m",
+      "A",
+      "G#m",
+      "D",
+      "B7sus4",
+      "B7",
+      "A",
+      "G#m",
+      "C#m",
+      "A",
+      "G#m",
+      "C#m",
+      "A",
+      "G#m",
+      "C#m",
+      "D",
+      "B7sus4",
+      "B7",
+      "A",
+      "E",
+      "A",
+      "B",
+      "G#m",
+      "C#m",
+      "A",
+      "E",
+      "A",
+      "B",
+      "E",
+    ])
+  ).toEqual("E")
 })
