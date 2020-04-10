@@ -5,21 +5,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Transposer = void 0;
 
-var _data = require("./data");
+var data = _interopRequireWildcard(require("./data"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 const escapeRegExp = s => s.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 
 
 class Transposer {
   constructor() {
-    const noteRegex = _data.notes.flat().map(escapeRegExp).sort((a, b) => a.length - b.length).join("|");
-
-    const adornmentRegex = _data.adornments.flat().map(escapeRegExp).sort((a, b) => a.length - b.length).join("|");
-
+    const noteRegex = data.notes.flat().map(escapeRegExp).sort((a, b) => a.length - b.length).join("|");
+    const adornmentRegex = data.adornments.flat().map(escapeRegExp).sort((a, b) => a.length - b.length).join("|");
     const regex = "(?!A [a-z])(?<=^| |\\t)(?:" + noteRegex + ")(?:" + adornmentRegex + ")?(?= |\\t|$)";
     this.chordRegex = new RegExp(regex, "g");
     this.spaceRegex = new RegExp("^[ \t\n]*$");
   }
+
   /*
   Parse a song with chords generating:
    - The lines of the song
@@ -32,8 +35,6 @@ class Transposer {
   lyrics  | lines with only text and chords above
   other   | lines with no chords
   */
-
-
   parse(song) {
     const extractChords = s => {
       const chords = [];
@@ -110,7 +111,12 @@ class Transposer {
     });
     this.lines = lines;
     this.progression = progression;
-    this.originalKey = this._guessKey();
+
+    const simplifyKey = keyName => // the guessed key could be e.g. A, Am, or Abm, but we're not processing minor keys so we just want the root of the chord
+    keyName.length === 1 ? keyName : keyName.length === 2 && keyName[1] === "m" ? data.keys.find(key => key.minor === keyName).key || keyName[0] : keyName.substring(0, 2);
+
+    this.originalKey = simplifyKey(this._guessKey());
+    this.otherProgessions = {};
   }
 
   stringify(newProgression) {
@@ -149,11 +155,11 @@ class Transposer {
   }
 
   transpose(newKey) {
-    let oldKeyScale = _data.scales[this.key + "Scale"];
-    let newKeyScale = _data.scales[newKey + "Scale"];
+    let oldKeyScale = data.scales[this.key + "Scale"];
+    let newKeyScale = data.scales[newKey + "Scale"];
 
     if (!oldKeyScale) {
-      oldKeyScale = _data.scales[`${_data.normalizeMap[key]}Scale`];
+      oldKeyScale = data.scales[`${data.normalizeMap[key]}Scale`];
     }
 
     const newProgression = progression.map(chord => chord.replace(/(([CDEFGAB]#\*)|([CDEFGAB]#)|([CDEFGAB]b+)|([CDEFGAB]\**))/g, match => newKeyScale[oldKeyScale.indexOf(match)]));
@@ -161,7 +167,7 @@ class Transposer {
   }
 
   _guessKey() {
-    var _keys$find;
+    var _data$keys$find;
 
     // before anything, process away everything that is not the root of the chord for root analysis
     const chordRootArray = this.progression.map(chord => {
@@ -218,8 +224,8 @@ class Transposer {
     let viIVByScale = {};
     let iiiviByScale = {};
 
-    for (const scale in _data.scales) {
-      const currentScale = _data.scales[scale]; // for each scale
+    for (const scale in data.scales) {
+      const currentScale = data.scales[scale]; // for each scale
 
       let fiveOneHits = 0;
       let iiVIHits = 0;
@@ -376,12 +382,13 @@ class Transposer {
     const minorKeyCount = this.progression.filter(chord => {
       return chord.substring(0, likelyKeyMinor.length) === likelyKeyMinor && chord.substring(likelyKey.length, 4) !== "maj";
     });
-    return keyCount.length >= minorKeyCount.length ? likelyKey : ((_keys$find = _data.keys.find(k => {
+    return keyCount.length >= minorKeyCount.length ? likelyKey : ((_data$keys$find = data.keys.find(k => {
       return k.minor === likelyKeyMinor;
-    })) === null || _keys$find === void 0 ? void 0 : _keys$find.key) || likelyKey;
+    })) === null || _data$keys$find === void 0 ? void 0 : _data$keys$find.key) || likelyKey;
   }
 
 }
 
 exports.Transposer = Transposer;
+Transposer.keys = data.keys;
 //# sourceMappingURL=Transposer.js.map
