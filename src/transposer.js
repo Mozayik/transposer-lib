@@ -1,15 +1,15 @@
-import { scales, normalizeMap, notes, adornments, keys } from "./data"
+import * as data from "./data"
 
 const escapeRegExp = (s) => s.replace(/[.*+\-?^${}()|[\]\\]/g, "\\$&") // $& means the whole matched string
 
 export class Transposer {
   constructor() {
-    const noteRegex = notes
+    const noteRegex = data.notes
       .flat()
       .map(escapeRegExp)
       .sort((a, b) => a.length - b.length)
       .join("|")
-    const adornmentRegex = adornments
+    const adornmentRegex = data.adornments
       .flat()
       .map(escapeRegExp)
       .sort((a, b) => a.length - b.length)
@@ -24,6 +24,8 @@ export class Transposer {
     this.chordRegex = new RegExp(regex, "g")
     this.spaceRegex = new RegExp("^[ \t\n]*$")
   }
+
+  static keys = data.keys
 
   /*
   Parse a song with chords generating:
@@ -125,7 +127,17 @@ export class Transposer {
 
     this.lines = lines
     this.progression = progression
-    this.originalKey = this._guessKey()
+
+    const simplifyKey = (keyName) =>
+      // the guessed key could be e.g. A, Am, or Abm, but we're not processing minor keys so we just want the root of the chord
+      keyName.length === 1
+        ? keyName
+        : keyName.length === 2 && keyName[1] === "m"
+        ? data.keys.find((key) => key.minor === keyName).key || keyName[0]
+        : keyName.substring(0, 2)
+
+    this.originalKey = simplifyKey(this._guessKey())
+    this.otherProgessions = {}
   }
 
   stringify(newProgression) {
@@ -190,11 +202,11 @@ export class Transposer {
   }
 
   transpose(newKey) {
-    let oldKeyScale = scales[this.key + "Scale"]
-    let newKeyScale = scales[newKey + "Scale"]
+    let oldKeyScale = data.scales[this.key + "Scale"]
+    let newKeyScale = data.scales[newKey + "Scale"]
 
     if (!oldKeyScale) {
-      oldKeyScale = scales[`${normalizeMap[key]}Scale`]
+      oldKeyScale = data.scales[`${data.normalizeMap[key]}Scale`]
     }
 
     const newProgression = progression.map((chord) =>
@@ -264,8 +276,8 @@ export class Transposer {
     let viIVByScale = {}
     let iiiviByScale = {}
 
-    for (const scale in scales) {
-      const currentScale = scales[scale]
+    for (const scale in data.scales) {
+      const currentScale = data.scales[scale]
       // for each scale
       let fiveOneHits = 0
       let iiVIHits = 0
@@ -454,7 +466,7 @@ export class Transposer {
 
     return keyCount.length >= minorKeyCount.length
       ? likelyKey
-      : keys.find((k) => {
+      : data.keys.find((k) => {
           return k.minor === likelyKeyMinor
         })?.key || likelyKey
   }

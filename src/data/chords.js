@@ -9,7 +9,7 @@ export const notes = [
   "G",
   ["G#", "Ab"],
   "A",
-  [("A#", "Bb")],
+  ["A#", "Bb"],
   "B",
 ]
 
