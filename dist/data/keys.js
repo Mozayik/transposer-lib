@@ -5,42 +5,42 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.keys = void 0;
 const keys = [{
-  key: "A",
+  name: "A",
   minor: "F#m"
 }, {
-  key: "Bb",
+  name: "Bb",
   minor: "Gm"
 }, {
-  key: "B",
+  name: "B",
   minor: "G#m"
 }, {
-  key: "C",
+  name: "C",
   minor: "Am"
 }, {
-  key: "Db",
+  name: "Db",
   minor: "Bbm"
 }, {
-  key: "D",
+  name: "D",
   minor: "Bm"
 }, {
-  key: "Eb",
+  name: "Eb",
   minor: "Cm"
 }, {
-  key: "E",
+  name: "E",
   minor: "C#m"
 }, {
-  key: "F",
+  name: "F",
   minor: "Dm"
 }, {
-  key: "Gb",
+  name: "Gb",
   minor: "Ebm",
   other: "F#",
   otherMinor: "D#m"
 }, {
-  key: "G",
+  name: "G",
   minor: "Em"
 }, {
-  key: "Ab",
+  name: "Ab",
   minor: "Fm"
 }];
 exports.keys = keys;

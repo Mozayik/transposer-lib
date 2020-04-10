@@ -110,19 +110,40 @@ class Transposer {
       });
     });
     this.lines = lines;
-    this.progression = progression;
+    this.originalKeyName = Transposer.guessKey(progression);
 
-    const simplifyKey = keyName => // the guessed key could be e.g. A, Am, or Abm, but we're not processing minor keys so we just want the root of the chord
-    keyName.length === 1 ? keyName : keyName.length === 2 && keyName[1] === "m" ? data.keys.find(key => key.minor === keyName).key || keyName[0] : keyName.substring(0, 2);
+    const transposeTo = newKeyName => {
+      var _data$scales$oldKeyNa;
 
-    this.originalKey = simplifyKey(this._guessKey());
-    this.otherProgessions = {};
+      const oldKeyName = this.originalKeyName;
+      const oldScale = (_data$scales$oldKeyNa = data.scales[oldKeyName]) !== null && _data$scales$oldKeyNa !== void 0 ? _data$scales$oldKeyNa : data.scales[data.normalizeMap[oldKeyName]];
+      const newScale = data.scales[newKeyName];
+      return progression.map(chord => chord.replace(/(([CDEFGAB]#\*)|([CDEFGAB]#)|([CDEFGAB]b+)|([CDEFGAB]\**))/g, match => newScale[oldScale.indexOf(match)]));
+    };
+
+    const getChordList = progression => Array.from(progression.reduce((set, chordName) => set.add(chordName), new Set())).sort();
+
+    this.transpositions = data.keys.reduce((obj, key) => {
+      const newProgression = key.name === this.originalKeyName ? progression : transposeTo(key.name);
+      obj[key.name] = {
+        progression: newProgression,
+        chords: getChordList(newProgression)
+      };
+      return obj;
+    }, {});
   }
 
-  stringify(newProgression) {
-    var _newProgression;
+  stringify(keyName) {
+    var _keyName, _this$transpositions$;
 
-    newProgression = (_newProgression = newProgression) !== null && _newProgression !== void 0 ? _newProgression : this.progression;
+    keyName = (_keyName = keyName) !== null && _keyName !== void 0 ? _keyName : this.originalKeyName;
+    const oldProgression = this.transpositions[this.originalKeyName].progression;
+    const newProgression = (_this$transpositions$ = this.transpositions[keyName]) === null || _this$transpositions$ === void 0 ? void 0 : _this$transpositions$.progression;
+
+    if (!newProgression) {
+      throw new Error(`Unknown key ${keyName}`);
+    }
+
     let newLines = this.lines.map(line => line.type === "other" ? line.parts[0] : line.type === "chords" ? {
       type: "chords",
       parts: line.parts.map(part => {
@@ -131,7 +152,7 @@ class Transposer {
         }
 
         const newChord = newProgression[part[0]];
-        const oldChord = this.progression[part[0]];
+        const oldChord = oldProgression[part[0]];
         const delta = newChord.length - oldChord.length;
         let s = part[1];
 
@@ -154,23 +175,11 @@ class Transposer {
     return newLines;
   }
 
-  transpose(newKey) {
-    let oldKeyScale = data.scales[this.key + "Scale"];
-    let newKeyScale = data.scales[newKey + "Scale"];
-
-    if (!oldKeyScale) {
-      oldKeyScale = data.scales[`${data.normalizeMap[key]}Scale`];
-    }
-
-    const newProgression = progression.map(chord => chord.replace(/(([CDEFGAB]#\*)|([CDEFGAB]#)|([CDEFGAB]b+)|([CDEFGAB]\**))/g, match => newKeyScale[oldKeyScale.indexOf(match)]));
-    return newProgression;
-  }
-
-  _guessKey() {
-    var _data$keys$find;
+  static guessKey(progression) {
+    var _Transposer$keys$find;
 
     // before anything, process away everything that is not the root of the chord for root analysis
-    const chordRootArray = this.progression.map(chord => {
+    const chordRootArray = progression.map(chord => {
       const accidentals = ["#", "b", "*", "bb", "bbb"];
       let chordRoot = "";
 
@@ -305,49 +314,49 @@ class Transposer {
       iiiviByScale[scale] = iiiviHits;
     }
 
-    likelyKeys.VI = Object.keys(VIByScale).reduce((a, b) => VIByScale[a] > VIByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.VI = Object.keys(VIByScale).reduce((a, b) => VIByScale[a] > VIByScale[b] ? a : b);
 
     if (likelyKeys.VI === "test") {
       likelyKeys.VI = null;
     }
 
-    likelyKeys.iiVI = Object.keys(iiVIByScale).reduce((a, b) => iiVIByScale[a] > iiVIByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.iiVI = Object.keys(iiVIByScale).reduce((a, b) => iiVIByScale[a] > iiVIByScale[b] ? a : b);
 
     if (likelyKeys.iiVI === "test") {
       likelyKeys.iiVI = null;
     }
 
-    likelyKeys.IVI = Object.keys(IVIByScale).reduce((a, b) => IVIByScale[a] > IVIByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.IVI = Object.keys(IVIByScale).reduce((a, b) => IVIByScale[a] > IVIByScale[b] ? a : b);
 
     if (likelyKeys.IVI === "test") {
       likelyKeys.IVI = null;
     }
 
-    likelyKeys.IVIV = Object.keys(IVIVByScale).reduce((a, b) => IVIVByScale[a] > IVIVByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.IVIV = Object.keys(IVIVByScale).reduce((a, b) => IVIVByScale[a] > IVIVByScale[b] ? a : b);
 
     if (likelyKeys.IVIV === "test") {
       likelyKeys.IVIV = null;
     }
 
-    likelyKeys.Vvi = Object.keys(VviByScale).reduce((a, b) => VviByScale[a] > VviByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.Vvi = Object.keys(VviByScale).reduce((a, b) => VviByScale[a] > VviByScale[b] ? a : b);
 
     if (likelyKeys.Vvi === "test") {
       likelyKeys.Vvi = null;
     }
 
-    likelyKeys.IVVI = Object.keys(IVVIByScale).reduce((a, b) => IVVIByScale[a] > IVVIByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.IVVI = Object.keys(IVVIByScale).reduce((a, b) => IVVIByScale[a] > IVVIByScale[b] ? a : b);
 
     if (likelyKeys.IVVI === "test") {
       likelyKeys.IVVI = null;
     }
 
-    likelyKeys.viIV = Object.keys(viIVByScale).reduce((a, b) => viIVByScale[a] > viIVByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.viIV = Object.keys(viIVByScale).reduce((a, b) => viIVByScale[a] > viIVByScale[b] ? a : b);
 
     if (likelyKeys.viIV === "test") {
       likelyKeys.viIV = null;
     }
 
-    likelyKeys.iiivi = Object.keys(iiiviByScale).reduce((a, b) => iiiviByScale[a] > iiiviByScale[b] ? a : b).replace("Scale", "");
+    likelyKeys.iiivi = Object.keys(iiiviByScale).reduce((a, b) => iiiviByScale[a] > iiiviByScale[b] ? a : b);
 
     if (likelyKeys.iiivi === "test") {
       likelyKeys.iiivi = null;
@@ -358,13 +367,9 @@ class Transposer {
       likelyKey = likelyKeys.firstLast;
     } else {
       // check all the likelyKeys and see which appears most frequently
-      const likelyKeyArray = Object.keys(likelyKeys).map(criteria => {
-        return likelyKeys[criteria];
-      });
+      const likelyKeyArray = Object.keys(likelyKeys).map(criteria => likelyKeys[criteria]);
       let sortedArray = likelyKeyArray.sort((a, b) => likelyKeyArray.filter(v => v === a).length - likelyKeyArray.filter(v => v === b).length).reverse();
-      likelyKey = sortedArray.find(k => {
-        return k !== null;
-      });
+      likelyKey = sortedArray.find(k => k !== null);
     } // if there are no standard chord movements to check, we should default to the first chord I think
 
 
@@ -376,15 +381,14 @@ class Transposer {
 
 
     const likelyKeyMinor = `${likelyKey}m`;
-    const keyCount = this.progression.filter(chord => {
-      return chord.substring(0, likelyKey.length) === likelyKey && chord.substring(likelyKey.length, likelyKey.length + 1) !== "m";
-    });
-    const minorKeyCount = this.progression.filter(chord => {
-      return chord.substring(0, likelyKeyMinor.length) === likelyKeyMinor && chord.substring(likelyKey.length, 4) !== "maj";
-    });
-    return keyCount.length >= minorKeyCount.length ? likelyKey : ((_data$keys$find = data.keys.find(k => {
+    const keyCount = progression.filter(chord => chord.substring(0, likelyKey.length) === likelyKey && chord.substring(likelyKey.length, likelyKey.length + 1) !== "m");
+    const minorKeyCount = progression.filter(chord => chord.substring(0, likelyKeyMinor.length) === likelyKeyMinor && chord.substring(likelyKey.length, 4) !== "maj");
+    likelyKey = keyCount.length >= minorKeyCount.length ? likelyKey : ((_Transposer$keys$find = Transposer.keys.find(k => {
       return k.minor === likelyKeyMinor;
-    })) === null || _data$keys$find === void 0 ? void 0 : _data$keys$find.key) || likelyKey;
+    })) === null || _Transposer$keys$find === void 0 ? void 0 : _Transposer$keys$find.name) || likelyKey; // the guessed key could be e.g. A, Am, or Abm, but we're not processing minor keys so we just want the root of the chord
+
+    likelyKey = likelyKey.length === 1 ? likelyKey : likelyKey.length === 2 && likelyKey[1] === "m" ? data.keys.find(key => key.minor === likelyKey).name || likelyKey[0] : likelyKey.substring(0, 2);
+    return likelyKey;
   }
 
 }
